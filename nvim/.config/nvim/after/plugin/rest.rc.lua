@@ -1,4 +1,4 @@
-require("rest-nvim").setup({
+--[[ require("rest-nvim").setup({
     -- Open request results in a horizontal split
     result_split_horizontal = false,
     -- Keep the http file buffer above|left when split horizontal|vertical
@@ -33,4 +33,4 @@ require("rest-nvim").setup({
 
 vim.keymap.set("n", "<Leader>rq", "<Plug>RestNvim")
 vim.keymap.set("n", "<Leader>prq", "<Plug>RestNvimPreview")
-vim.keymap.set("n", "<Leader>rl", "<Plug>RestNvimLast")
+vim.keymap.set("n", "<Leader>rl", "<Plug>RestNvimLast") ]]
