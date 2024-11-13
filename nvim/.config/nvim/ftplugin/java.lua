@@ -1,3 +1,7 @@
+--[[
+    in case if jdtls keeps crashing, remove the data directory from mason packages
+    and rebuild again
+]]
 local c = require("kevin.constants")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
@@ -16,6 +20,7 @@ local extendedClientCapabilities = jdtls.extendedClientCapabilities
 extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
 -- Determine OS
+local config_path = vim.fn.stdpath("config")
 local home = vim.fn.stdpath("data") .. "/mason/packages"
 local java_debug_path = c.java_debug_path
 local vscode_java_test_path = c.vscode_java_test_path
@@ -73,7 +78,7 @@ local function on_attach(client, bufnr)
 
     require("jdtls").setup_dap({ hotcodereplace = "auto" })
     require("jdtls.dap").setup_dap_main_class_configs()
-    require("jdtls.setup").add_commands()
+    -- require("jdtls.setup").add_commands()
     vim.lsp.codelens.refresh()
 end
 
@@ -91,24 +96,40 @@ else
 end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-local workspace_dir = WORKSPACE_PATH .. project_name
+local project_path_prefix = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h")
+local rootdir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
+local fix_path = rootdir:gsub(project_path_prefix, "")
+
+--[[ print(project_path_prefix)
+print(rootdir)
+print(fix_path) ]]
+
+-- local workspace_dir = WORKSPACE_PATH .. project_name
+local workspace_dir = WORKSPACE_PATH .. fix_path
+-- local workspace_dir = WORKSPACE_PATH .. project_path_prefix
 
 JAVA_DAP_ACTIVE = true
 
 local bundles = {}
 
 if JAVA_DAP_ACTIVE then
-    vim.list_extend(bundles, vim.split(vim.fn.glob(vscode_java_test_path .. "server/*.jar"), "\n"))
+    vim.list_extend(bundles, vim.split(vim.fn.glob(vscode_java_test_path .. "server/*.jar", 1), "\n"))
     vim.list_extend(
         bundles,
         vim.split(
             vim.fn.glob(
-                java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar"
+                java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1
             ),
             "\n"
         )
     )
+
+    --[[ for k, v in ipairs(bundles) do
+        print(v)
+    end ]]
 end
+
+vim.list_extend(bundles, vim.split(vim.fn.glob(config_path .. "*.jar", 1), "\n"))
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
     -- The command that starts the language server
@@ -123,8 +144,7 @@ local config = {
         "-Declipse.product=org.eclipse.jdt.ls.core.product",
         "-Dlog.protocol=true",
         "-Dlog.level=ALL",
-        "-Xms4g",
-        "-Xms100m",
+        "-Xmx4g",
         "-XX:AdaptiveSizePolicyWeight=90",
         "-XX:GCTimeRatio=4",
         "-XX:+UseParallelGC",
@@ -153,29 +173,53 @@ local config = {
 
     settings = {
         java = {
+            sources = {
+                organizeImports = {
+                    starThreshold = 99999,
+                    staticStarThreshold = 99999
+                }
+            },
+            project = {
+                referencedLibraries = {
+                    "/Users/kevintung/code/aibank-ms/tfb-nano-message-schema/build/libs/tfb-nano-message-schema-1.0.0-SNAPSHOT.jar",
+                    "/Users/kevintung/code/aibank-ms/shared-components/tfb-esb-component/lib/eai.jar"
+                }
+            },
             eclipse = {
                 downloadSources = true,
             },
             configuration = {
                 updateBuildConfiguration = "interactive",
                 runtimes = {
-                    {
+                    --[[ {
                         name = "JavaSE-11",
                         path = c.jdtls_jdk11_path,
                     },
                     {
                         name = "JavaSE-15",
                         path = c.jdtls_jdk15_path,
-                    },
+                    }, ]]
                     {
                         name = "JavaSE-17",
                         path = c.jdtls_jdk17_path,
                     },
-                    {
-                        name = "JavaSE-1.8",
-                        path = c.jdtls_jdk8_path,
-                    },
+                    --[[ {
+						name = "JavaSE-1.8",
+						path = c.jdtls_jdk8_path,
+					}, ]]
                 },
+            },
+
+            completion = {
+                importOrder = {
+                    "java",
+                    "javax",
+                    "org",
+                    "com",
+                },
+            },
+            gradle = {
+                enabled = true
             },
             maven = {
                 downloadSources = true,
@@ -195,16 +239,25 @@ local config = {
                 },
             },
             format = {
-                enabled = false,
+                settings = {
+                    url = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml",
+                    profile = "Import"
+
+                }
             },
         },
         signatureHelp = { enabled = true },
         contentProvider = { preferred = "fernflower" },
         extendedClientCapabilities = extendedClientCapabilities,
         settings = {
-            ["java.format.settings.url"] =
-            "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
-            ["java.format.settings.profile"] = "GoogleStyle",
+            -- ["java.format.settings.url"] = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+            -- ["java.format.settings.profile"] = "GoogleStyle",
+            ["java.format.settings.url"] = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml"
+        },
+        codeGeneration = {
+            settings = {
+                url = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/codetemplates.xml",
+            }
         },
     },
 
@@ -257,5 +310,5 @@ dap.configurations.java = {
 
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
-require("jdtls").start_or_attach(config)
+-- require("jdtls").start_or_attach(config)
 require("jdtls").start_or_attach(config)

@@ -66,11 +66,11 @@ for _, server in ipairs(lsp.servers) do
     -- non linux/mac system, will return \ or \\
     if package.config:sub(1, 1) ~= "/" then
         if server == "cmake" then
-            opts["cmd"] = { "cmake-language-server.cmd" }
+            opts["cmd"] = { "cmake-language-server" }
         end
 
         if server == "kotlin_language_server" then
-            opts["cmd"] = { "kotlin-language-server.cmd" }
+            opts["cmd"] = { "kotlin-language-server" }
         end
 
         if server == "powershell_es" then
@@ -114,8 +114,47 @@ nvim_lsp.ts_ls.setup({
         "typescriptreact",
         "typescript.tsx",
     },
-    cmd = { "typescript-language-server.cmd", "--stdio" },
+    cmd = { "typescript-language-server", "--stdio" },
     root_dir = util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git") or vim.loop.cwd(),
+})
+
+--[[ nvim_lsp.eslint.setup({
+    -- cmd = { "vscode-eslint-language-server", "--stdio" },
+    cmd = { "eslint_d", "--stdio" },
+    filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx", "vue", "svelte", "astro" },
+    on_attach = function(client, bufnr)
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            command = "EslintFixAll",
+        })
+    end,
+}) ]]
+
+-- local htmlFormatter = lsp.capabilities
+--[[ htmlFormatter["html.format.wrapLineLength"] = 180
+htmlFormatter["html.format.wrapAttributes"] = "aligned-multiple" ]]
+nvim_lsp.html.setup({
+    cmd = { "vscode-html-language-server", "--stdio" },
+    settings = {
+        html = {
+            format = {
+                wrapLineLength = 180,
+                wrapAttributes = 'aligned-multiple'
+            }
+        }
+    },
+    filetypes = { "html", "templ" },
+    init_options = {
+        configurationSection = { "html", "css" },
+        embeddedLanguages = {
+            html = true,
+            css = true,
+            javascript = false
+        },
+        provideFormatter = true,
+    },
+    on_attach = lsp.on_attach,
+    capabilities = lsp.capabilities,
 })
 
 -- servers that lspconfig supports but mason doesn't have

@@ -1,10 +1,10 @@
 -- vim.g.barbar_auto_setup = false -- disable auto-setup
 require("barbar").setup({
-	-- WARN: do not copy everything below into your config!
-	--       It is just an example of what configuration options there are.
-	--       The defaults are suitable for most people.
+    -- WARN: do not copy everything below into your config!
+    --       It is just an example of what configuration options there are.
+    --       The defaults are suitable for most people.
 
-	--[[ -- Enable/disable animations
+    --[[ -- Enable/disable animations
 	animation = true,
 	-- Enable/disable auto-hiding the tab bar when there is a single buffer
 	auto_hide = false,
@@ -111,8 +111,8 @@ local opts = { noremap = true, silent = true }
 map("n", "<A-,>", "<Cmd>BufferPrevious<CR>", opts)
 map("n", "<A-.>", "<Cmd>BufferNext<CR>", opts)
 -- Re-order to previous/next
-map("n", "<A-[>", "<Cmd>BufferMovePrevious<CR>", opts)
-map("n", "<A-]>", "<Cmd>BufferMoveNext<CR>", opts)
+map("n", "“", "<Cmd>BufferMovePrevious<CR>", opts)
+map("n", "‘", "<Cmd>BufferMoveNext<CR>", opts)
 -- Goto buffer in position...
 map("n", "<A-1>", "<Cmd>BufferGoto 1<CR>", opts)
 map("n", "<A-2>", "<Cmd>BufferGoto 2<CR>", opts)

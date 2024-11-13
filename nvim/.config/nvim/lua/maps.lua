@@ -13,7 +13,7 @@ keymap.set("t", "kj", "<C-\\><C-n>")
 keymap.set("n", "<Leader>aa", ":%y+<Return>")
 keymap.set("n", "<Leader>ss", ":w<Return>")
 -- keymap.set("n", "<Space>", "za")
-keymap.set("n", "<Leader>ev", ":Hex! C:/Users/H0268/AppData/Local/nvim/<Return>")
+keymap.set("n", "<Leader>ev", ":Hex! ~/nvim_lua_config/<Return>")
 keymap.set("n", "<Leader>sv", ":source $MYVIMRC<Return>")
 keymap.set("n", "<Leader>o", ":Ex<Return>")
 keymap.set("n", "<Leader><Space>", ":noh<Return>")
@@ -65,10 +65,10 @@ keymap.set("", "<C-k>", "<C-w>k")
 keymap.set("", "<C-l>", "<C-w>l")
 
 -- Resize window
-keymap.set("n", "<M-h>", "<C-w><")
-keymap.set("n", "<M-l>", "<C-w>>")
-keymap.set("n", "<M-k>", "<C-w>+")
-keymap.set("n", "<M-j>", "<C-w>-")
+keymap.set("n", "˙", "<C-w><")
+keymap.set("n", "¬", "<C-w>>")
+keymap.set("n", "∆", "<C-w>+")
+keymap.set("n", "˚", "<C-w>-")
 
 -- Visual indent
 keymap.set("v", ">", ">gv")

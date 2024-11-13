@@ -27,6 +27,7 @@ vim.opt.errorbells = false -- no error bells when reach bottom
 vim.opt.hidden = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.signcolumn = "yes"
 
 vim.cmd([[colorscheme gruvbox-baby]])
 -- vim.cmd([[colorscheme gruvbox]])

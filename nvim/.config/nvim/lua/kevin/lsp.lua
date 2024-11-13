@@ -28,23 +28,29 @@ function M.on_attach(client, bufnr)
     -- Jump LSP diagnostics
     -- NOTE: Currently, there is a bug in lspsaga.diagnostic module. Thus we use
     --       Vim commands to move through diagnostics.
-    buf_set_keymap("n", "[g", ":Lspsaga diagnostic_jump_prev<CR>", opts)
-    buf_set_keymap("n", "]g", ":Lspsaga diagnostic_jump_next<CR>", opts)
+    buf_set_keymap("n", "[g", "<cmd>lua vim.diagnostic.goto_prev({ border = 'rounded' })<CR>", opts)
+    buf_set_keymap("n", "]g", "<cmd>lua vim.diagnostic.goto_next({ border = 'rounded' })<CR>", opts)
 
     -- Rename symbol
-    buf_set_keymap("n", "<leader>rn", "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
+    -- buf_set_keymap("n", "<leader>rn", "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
+    buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 
     -- Find references
-    buf_set_keymap("n", "gr", '<cmd>lua require("lspsaga.provider").lsp_finder()<CR>', opts)
+    buf_set_keymap("n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
+
+    -- Find Implementation
+    buf_set_keymap("n", "gI", "<cmd>Telescope lsp_implementations<CR>", opts)
 
     -- Doc popup scrolling
-    buf_set_keymap("n", "K", "<cmd>lua require('lspsaga.hover').render_hover_doc()<CR>", opts)
-    buf_set_keymap("n", "L", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>", opts)
-    buf_set_keymap("n", "H", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", opts)
+    -- buf_set_keymap("n", "K", "<cmd>lua require('lspsaga.hover').render_hover_doc()<CR>", opts)
+    buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts)
+    --[[ buf_set_keymap("n", "L", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>", opts)
+    buf_set_keymap("n", "H", "<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>", opts) ]]
 
     -- codeaction
-    buf_set_keymap("n", "<leader>ac", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
-    buf_set_keymap("v", "<leader>a", ":<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
+    -- buf_set_keymap("n", "<leader>ac", "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
+    buf_set_keymap("n", "<leader>ac", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+    -- buf_set_keymap("v", "<leader>a", ":<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
 
     -- Floating terminal
     -- NOTE: Use `vim.cmd` since `buf_set_keymap` is not working with `tnoremap...`
@@ -68,7 +74,9 @@ end
 
 M.servers = {
     "bashls",
+    -- "jedi_language_server",
     "pyright",
+    "lemminx",
     "lua_ls",
     "html",
     "ts_ls",
@@ -78,14 +86,13 @@ M.servers = {
     "golangci_lint_ls",
     "emmet_ls",
     "kotlin_language_server",
-    "powershell_es",
     "sqlls",
     "cmake",
     "yamlls",
     "cssls",
     "rust_analyzer",
     "marksman",
-    "omnisharp",
+    "clangd",
     "zls"
 }
 
