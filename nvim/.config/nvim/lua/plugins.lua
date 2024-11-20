@@ -171,7 +171,7 @@ local plugins = {
             "mfussenegger/nvim-dap",
         },
     },
-    { "romgrk/barbar.nvim",      dependencies = "nvim-web-devicons" },
+    { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
     "mbbill/undotree",
     "https://gitlab.com/schrieveslaach/sonarlint.nvim",
     "https://github.com/sotte/presenting.vim",
