@@ -1,12 +1,16 @@
 local bufferline = require("bufferline")
+local bufdelete = require("bufdelete")
+local closeCommand = function(bufnum)
+	bufdelete.bufdelete(bufnum, true)
+end
 bufferline.setup({
 	options = {
 		mode = "buffers", -- set to "tabs" to only show tabpages instead
 		style_preset = bufferline.style_preset.default, -- or bufferline.style_preset.minimal,
 		themable = true, -- allows highlight groups to be overriden i.e. sets highlights as default
 		numbers = "ordinal", -- | function({ ordinal, id, lower, raise }): string,
-		close_command = "bdelete! %d", -- can be a string | function, | false see "Mouse actions"
-		right_mouse_command = "bdelete! %d", -- can be a string | function | false, see "Mouse actions"
+		close_command = closeCommand(bufnum), -- can be a string | function, | false see "Mouse actions"
+		right_mouse_command = closeCommand(bufnum), -- can be a string | function | false, see "Mouse actions"
 		left_mouse_command = "buffer %d", -- can be a string | function, | false see "Mouse actions"
 		middle_mouse_command = nil, -- can be a string | function, | false see "Mouse actions"
 		indicator = {
@@ -33,33 +37,12 @@ bufferline.setup({
 		max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
 		truncate_names = true, -- whether or not tab names should be truncated
 		tab_size = 18,
-		diagnostics = "nvim_lsp",
+		diagnostics = false,
 		diagnostics_update_in_insert = false, -- only applies to coc
 		diagnostics_update_on_event = true, -- use nvim's diagnostic handler
 		-- The diagnostics indicator can be set to nil to keep the buffer name highlight but delete the highlighting
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			return "(" .. count .. ")"
-		end,
-		-- NOTE: this will be called a lot so don't do any heavy processing here
-		custom_filter = function(buf_number, buf_numbers)
-			-- filter out filetypes you don't want to see
-			if vim.bo[buf_number].filetype ~= "<i-dont-want-to-see-this>" then
-				return true
-			end
-			-- filter out by buffer name
-			if vim.fn.bufname(buf_number) ~= "<buffer-name-I-dont-want>" then
-				return true
-			end
-			-- filter out based on arbitrary rules
-			-- e.g. filter out vim wiki buffer from tabline in your work repo
-			if vim.fn.getcwd() == "<work-repo>" and vim.bo[buf_number].filetype ~= "wiki" then
-				return true
-			end
-			-- filter out by it's index number in list (don't show first buffer)
-			if buf_numbers[1] ~= buf_number then
-				return true
-			end
-			return false
 		end,
 		offsets = {
 			{
@@ -77,9 +60,6 @@ bufferline.setup({
 			-- e.g.
 			local icon, hl = require("nvim-web-devicons").get_icon_by_filetype(element.filetype, { default = false })
 			return icon, hl
-			-- or
-			--[[ local custom_map = {my_thing_ft: {icon = "my_thing_icon", hl}}
-              return custom_map[element.filetype] ]]
 		end,
 		show_buffer_icons = true, -- disable filetype icons for buffers
 		show_buffer_close_icons = true,
@@ -124,3 +104,4 @@ map("n", "Ω", "<cmd>BufferLinePick<CR>", opts)
 
 -- close tabs
 map("n", "ç", "<cmd>BufferLinePickClose<CR>", opts)
+map("n", "å", "<cmd>BufferLineCloseOthers<CR>", opts)
