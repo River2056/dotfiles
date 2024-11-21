@@ -105,4 +105,4 @@ map("n", "Ω", "<cmd>BufferLinePick<CR>", opts)
 -- close tabs
 map("n", "ç", "<cmd>BufferLinePickClose<CR>", opts)
 map("n", "å", "<cmd>BufferLineCloseOthers<CR>", opts)
-map("n", "", "<cmd>BufferLineCloseRight<CR>", opts)
+map("n", "≈", "<cmd>BufferLineCloseRight<CR>", opts)
