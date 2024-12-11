@@ -287,7 +287,10 @@ local plugins = {
 			input = { enabled = true },
 			notifier = { enabled = true },
 			quickfile = { enabled = true },
-			statuscolumn = { enabled = true },
+			statuscolumn = {
+				enabled = true,
+				left = { "sign", "mark" },
+			},
 			words = { enabled = true },
 		},
 	},
