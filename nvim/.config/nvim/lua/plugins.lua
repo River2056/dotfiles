@@ -287,11 +287,45 @@ local plugins = {
 			input = { enabled = true },
 			notifier = { enabled = true },
 			quickfile = { enabled = true },
+			scratch = {
+				enabled = true,
+			},
 			statuscolumn = {
 				enabled = true,
 				left = { "sign", "mark" },
 			},
+			git = { enabled = true },
 			words = { enabled = true },
+		},
+		keys = {
+			{
+				"<leader>.",
+				function()
+					Snacks.scratch()
+				end,
+				desc = "Toggle Scratch Buffer",
+			},
+			{
+				"<leader>S",
+				function()
+					Snacks.scratch.select()
+				end,
+				desc = "Select Scratch Buffer",
+			},
+			{
+				"<leader>b",
+				function()
+					Snacks.git.blame_line({
+						width = 0.6,
+						height = 0.6,
+						border = "rounded",
+						title = " Git Blame ",
+						title_pos = "center",
+						ft = "git",
+					})
+				end,
+				desc = "Git Blame current line",
+			},
 		},
 	},
 }
