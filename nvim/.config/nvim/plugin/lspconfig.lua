@@ -81,6 +81,62 @@ for _, server in ipairs(lsp.servers) do
     nvim_lsp[server].setup(opts)
 end
 
+local function set_python_path(path)
+    local clients = vim.lsp.get_clients({
+        bufnr = vim.api.nvim_get_current_buf(),
+        name = "basedpyright",
+    })
+    for _, client in ipairs(clients) do
+        if client.settings then
+            client.settings.python = vim.tbl_deep_extend("force", client.settings.python or {}, { pythonPath = path })
+        else
+            client.config.settings =
+                vim.tbl_deep_extend("force", client.config.settings, { python = { pythonPath = path } })
+        end
+        client.notify("workspace/didChangeConfiguration", { settings = nil })
+    end
+end
+
+--[[ nvim_lsp.basedpyright.setup({
+    cmd = { "basedpyright-langserver", "--stdio" },
+    filetypes = { "python" },
+    root_markers = {
+        "pyproject.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "Pipfile",
+        "pyrightconfig.json",
+        ".git",
+    },
+    settings = {
+        basedpyright = {
+            analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = "openFilesOnly",
+                typeCheckingMode = "standard", -- ["off", "basic", "standard", "strict"]
+            },
+        },
+    },
+    on_attach = function(client, bufnr)
+        vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
+            client:exec_cmd({
+                command = "basedpyright.organizeimports",
+                arguments = { vim.uri_from_bufnr(bufnr) },
+            })
+        end, {
+            desc = "Organize Imports",
+        })
+
+        vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
+            desc = "Reconfigure basedpyright with the provided python path",
+            nargs = 1,
+            complete = "file",
+        })
+    end,
+}) ]]
+
 -- specific additional configs per language
 local libs = vim.api.nvim_get_runtime_file("", true)
 table.insert(libs, "${3rd}/love2d/library")
@@ -139,9 +195,9 @@ nvim_lsp.html.setup({
         html = {
             format = {
                 wrapLineLength = 180,
-                wrapAttributes = 'aligned-multiple'
-            }
-        }
+                wrapAttributes = "aligned-multiple",
+            },
+        },
     },
     filetypes = { "html", "templ" },
     init_options = {
@@ -149,7 +205,7 @@ nvim_lsp.html.setup({
         embeddedLanguages = {
             html = true,
             css = true,
-            javascript = false
+            javascript = false,
         },
         provideFormatter = true,
     },

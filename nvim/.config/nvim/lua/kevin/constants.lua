@@ -11,9 +11,9 @@ M.lombok_path = M.home .. "/lombok.jar"
 
 M.jdtls_jdk11_path = "C:/Program Files/Eclipse Adoptium/jdk-11.0.16.8-hotspot"
 M.jdtls_jdk15_path = "C:/openjdk-15.0.2_windows-x64_bin/jdk-15.0.2"
-M.jdtls_jdk17_path = "/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home"
+M.jdtls_jdk21_path = "/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home"
 M.jdtls_jdk8_path = "C:/Program Files/Zulu/zulu-8"
-M.jdtls_java_path = M.jdtls_jdk17_path .. "/bin/java"
+M.jdtls_java_path = M.jdtls_jdk21_path .. "/bin/java"
 M.jdtls_debug_port = 8000
 
 return M

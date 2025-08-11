@@ -29,6 +29,13 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.signcolumn = "yes:3"
 
+-- filetypes
+vim.filetype.add({
+    extension = {
+        html = "html"
+    }
+})
+
 vim.cmd([[colorscheme gruvbox-baby]])
 -- vim.cmd([[colorscheme gruvbox]])
 -- vim.cmd([[colorscheme tokyonight]])
