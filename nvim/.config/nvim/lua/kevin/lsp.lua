@@ -82,7 +82,7 @@ M.servers = {
     "html",
     "ts_ls",
     "jsonls",
-    "vuels",
+    "vue_ls",
     "gopls",
     "golangci_lint_ls",
     "emmet_ls",

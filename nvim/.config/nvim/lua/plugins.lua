@@ -356,6 +356,7 @@ local plugins = {
 			},
 		},
 	},
+	"stevearc/conform.nvim",
 }
 
 local opts = {}
