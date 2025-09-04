@@ -289,71 +289,71 @@ local vtsls_config = {
                     endOfLine = "lf",
                     semi = true,
                     quoteProps = "as-needed",
-                    --[[ plugins = { "prettier-plugin-organize-imports" },
-					overrides = {
-						{
-							files = "*.vue",
-							options = {
-								parser = "vue",
-								printWidth = 200,
-								vueIndentScriptAndStyle = true,
-							},
-						},
-						{
-							files = "*.[m]js",
-							options = {
-								parser = "babel",
-							},
-						},
-						{
-							files = ".prettierrc.ts",
-							options = {
-								parser = "typescript",
-							},
-						},
-						{
-							files = "*.messages.ts",
-							options = {
-								parser = "typescript",
-								printWidth = 800,
-								semi = true,
-							},
-						},
-						{
-							files = "*.ts",
-							options = {
-								parser = "typescript",
-								semi = true,
-							},
-						},
-						{
-							files = "*.html",
-							options = {
-								parser = "html",
-								printWidth = 1000,
-								bracketSameLine = true,
-								singleAttributePerLine = false,
-							},
-						},
-						{
-							files = "*.cjs",
-							options = {
-								parser = "babel",
-							},
-						},
-						{
-							files = "*.json",
-							options = {
-								parser = "json",
-							},
-						},
-						{
-							files = "*.md",
-							options = {
-								parser = "markdown",
-							},
-						},
-					}, ]]
+                    plugins = { "prettier-plugin-organize-imports" },
+                    overrides = {
+                        {
+                            files = "*.vue",
+                            options = {
+                                parser = "vue",
+                                printWidth = 200,
+                                vueIndentScriptAndStyle = true,
+                            },
+                        },
+                        {
+                            files = "*.[m]js",
+                            options = {
+                                parser = "babel",
+                            },
+                        },
+                        {
+                            files = ".prettierrc.ts",
+                            options = {
+                                parser = "typescript",
+                            },
+                        },
+                        {
+                            files = "*.messages.ts",
+                            options = {
+                                parser = "typescript",
+                                printWidth = 800,
+                                semi = true,
+                            },
+                        },
+                        {
+                            files = "*.ts",
+                            options = {
+                                parser = "typescript",
+                                semi = true,
+                            },
+                        },
+                        {
+                            files = "*.html",
+                            options = {
+                                parser = "html",
+                                printWidth = 1000,
+                                bracketSameLine = true,
+                                singleAttributePerLine = false,
+                            },
+                        },
+                        {
+                            files = "*.cjs",
+                            options = {
+                                parser = "babel",
+                            },
+                        },
+                        {
+                            files = "*.json",
+                            options = {
+                                parser = "json",
+                            },
+                        },
+                        {
+                            files = "*.md",
+                            options = {
+                                parser = "markdown",
+                            },
+                        },
+                    },
                 },
             },
         },
