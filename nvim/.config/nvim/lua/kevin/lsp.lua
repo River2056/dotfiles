@@ -75,6 +75,7 @@ end
 M.servers = {
 	"bashls",
 	-- "jedi_language_server",
+	-- "basedpyright",
 	"pyright",
 	"lemminx",
 	"lua_ls",
@@ -94,6 +95,7 @@ M.servers = {
 	"marksman",
 	-- "clangd",
 	"zls",
+	"elixirls",
 }
 
 return M
