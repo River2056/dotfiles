@@ -493,6 +493,13 @@ nvim_lsp.ccls.setup({
     capabilities = lsp.capabilities,
 })
 
+-- elixir
+vim.lsp.enable("elixirls")
+nvim_lsp.elixirls.setup({
+    cmd = { vim.fn.stdpath("data") .. "/mason/packages/elixir-ls/language_server.sh" },
+    filetypes = { "elixir", "eelixir", "heex", "surface" },
+})
+
 local pid = vim.fn.getpid()
 local mason_path = vim.fn.stdpath("data") .. "/mason/bin"
 nvim_lsp.omnisharp.setup({
