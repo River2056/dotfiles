@@ -498,6 +498,8 @@ vim.lsp.enable("elixirls")
 nvim_lsp.elixirls.setup({
     cmd = { vim.fn.stdpath("data") .. "/mason/packages/elixir-ls/language_server.sh" },
     filetypes = { "elixir", "eelixir", "heex", "surface" },
+    on_attach = lsp.on_attach,
+    capabilities = lsp.capabilities,
 })
 
 local pid = vim.fn.getpid()
