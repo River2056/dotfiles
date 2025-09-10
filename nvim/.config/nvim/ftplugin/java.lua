@@ -83,13 +83,13 @@ local function on_attach(client, bufnr)
 end
 
 if vim.fn.has("mac") == 1 then
-    WORKSPACE_PATH = home .. "/workspace/"
+    WORKSPACE_PATH = home .. "/workspace"
     configuration = "mac"
 elseif vim.fn.has("unix") == 1 then
-    WORKSPACE_PATH = home .. "/workspace/"
+    WORKSPACE_PATH = home .. "/workspace"
     configuration = "linux"
 elseif vim.fn.has("win32") == 1 then
-    WORKSPACE_PATH = home .. "/workspace/"
+    WORKSPACE_PATH = home .. "/workspace"
     configuration = "win"
 else
     print("Unsupported system")
@@ -97,7 +97,8 @@ end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local project_path_prefix = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h")
-local rootdir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
+local root = vim.fs.root(0, { "gradlew", ".git", "mvnw" })
+local rootdir = root ~= nil and root or require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
 local fix_path = rootdir:gsub(project_path_prefix, "")
 
 --[[ print(project_path_prefix)
@@ -118,7 +119,8 @@ if JAVA_DAP_ACTIVE then
         bundles,
         vim.split(
             vim.fn.glob(
-                java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1
+                java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar",
+                1
             ),
             "\n"
         )
@@ -132,6 +134,7 @@ end
 vim.list_extend(bundles, vim.split(vim.fn.glob(config_path .. "*.jar", 1), "\n"))
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
+    name = "jdtls",
     -- The command that starts the language server
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
@@ -169,21 +172,21 @@ local config = {
     on_attach = on_attach,
     capabilities = capabilities,
 
-    root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" }),
+    root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
 
     settings = {
         java = {
             sources = {
                 organizeImports = {
                     starThreshold = 99999,
-                    staticStarThreshold = 99999
-                }
+                    staticStarThreshold = 99999,
+                },
             },
             project = {
                 referencedLibraries = {
                     "/Users/kevintung/code/aibank-ms/tfb-nano-message-schema/build/libs/tfb-nano-message-schema-1.0.0-SNAPSHOT.jar",
-                    "/Users/kevintung/code/aibank-ms/shared-components/tfb-esb-component/lib/eai.jar"
-                }
+                    "/Users/kevintung/code/aibank-ms/shared-components/tfb-esb-component/lib/eai.jar",
+                },
             },
             eclipse = {
                 downloadSources = true,
@@ -219,7 +222,7 @@ local config = {
                 },
             },
             gradle = {
-                enabled = true
+                enabled = true,
             },
             maven = {
                 downloadSources = true,
@@ -241,9 +244,8 @@ local config = {
             format = {
                 settings = {
                     url = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml",
-                    profile = "Import"
-
-                }
+                    profile = "Import",
+                },
             },
         },
         signatureHelp = { enabled = true },
@@ -252,12 +254,12 @@ local config = {
         settings = {
             -- ["java.format.settings.url"] = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
             -- ["java.format.settings.profile"] = "GoogleStyle",
-            ["java.format.settings.url"] = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml"
+            ["java.format.settings.url"] = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml",
         },
         codeGeneration = {
             settings = {
                 url = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/codetemplates.xml",
-            }
+            },
         },
     },
 
