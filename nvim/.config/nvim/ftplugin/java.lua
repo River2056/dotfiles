@@ -114,13 +114,13 @@ JAVA_DAP_ACTIVE = true
 local bundles = {}
 
 if JAVA_DAP_ACTIVE then
-    vim.list_extend(bundles, vim.split(vim.fn.glob(vscode_java_test_path .. "server/*.jar", 1), "\n"))
+    vim.list_extend(bundles, vim.split(vim.fn.glob(vscode_java_test_path .. "server/*.jar", true), "\n"))
     vim.list_extend(
         bundles,
         vim.split(
             vim.fn.glob(
                 java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar",
-                1
+                true
             ),
             "\n"
         )
@@ -131,10 +131,10 @@ if JAVA_DAP_ACTIVE then
     end ]]
 end
 
-vim.list_extend(bundles, vim.split(vim.fn.glob(config_path .. "*.jar", 1), "\n"))
+vim.list_extend(bundles, vim.split(vim.fn.glob(config_path .. "*.jar", true), "\n"))
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
-    name = "jdtls",
+    -- name = "jdtls",
     -- The command that starts the language server
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {

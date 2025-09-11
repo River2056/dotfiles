@@ -1,16 +1,21 @@
 local status, mason = pcall(require, "mason")
 if not status then
-	return
+    return
 end
 local status2, lspconfig = pcall(require, "mason-lspconfig")
 if not status2 then
-	return
+    return
 end
 local lsp = require("kevin.lsp")
 
 mason.setup({})
 
 lspconfig.setup({
-	ensure_installed = lsp.servers,
-	automatic_installation = false,
+    ensure_installed = lsp.servers,
+    automatic_installation = false,
+    automatic_enable = {
+        exclude = {
+            "jdtls",
+        },
+    },
 })
