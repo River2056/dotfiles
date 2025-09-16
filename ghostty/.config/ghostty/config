@@ -1,6 +1,9 @@
 theme = Tomorrow Night Bright
 background-blur-radius = 25
 background-opacity = 0.95
+background-image = "./community_participation.jpg"
+background-image-opacity = 0.3
+background-image-fit = cover
 
 font-family = MesloLGS NF
 font-size = 14
