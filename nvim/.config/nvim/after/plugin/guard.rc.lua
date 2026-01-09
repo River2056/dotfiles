@@ -2,7 +2,7 @@ local ft = require("guard.filetype")
 
 -- ft("python"):fmt("black")
 -- ft("lua"):fmt("lsp"):append("stylua")
-ft("typescript,javascript,typescriptreact,vue"):fmt("prettier")
+ft("typescript,javascript,typescriptreact,vue,json,jsonc"):fmt("prettier")
 -- ft("typescript,typescriptreact"):fmt("eslint_d")
 -- ft("typescript,typescriptreact"):lint("eslint_d")
 -- ft('html'):fmt('html-lsp')

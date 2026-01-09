@@ -11,6 +11,38 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local codeCompanionAdapters = {
+    http = {
+        ollama = function()
+            return require("codecompanion.adapters").extend("ollama", {
+                schema = {
+                    model = {
+                        default = "qwen2.5-coder:7b",
+                    },
+                    think = {
+                        default = false,
+                    },
+                },
+            })
+        end,
+        openai_compatible = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+                -- url = "https://servicesessentials.ibm.com/apis/v3",
+                env = {
+                    api_key =
+                    "7:xxx:96ca8495-9263-4979-8c45-959b782f687e:41d9a690-4d7a-41ec-9b3d-d2cdb48fe59c:56018549-6321-4e2e-b574-28c3287571ff",
+                    url = "https://servicesessentials.ibm.com/apis/v3",
+                },
+                schema = {
+                    model = {
+                        default = "global/anthropic.claude-sonnet-4-5-20250929-v1:0",
+                    },
+                },
+            })
+        end,
+    },
+}
+
 local plugins = {
     "nvim-lua/plenary.nvim",     -- Common utilities
     "kyazdani42/nvim-tree.lua",
@@ -43,8 +75,6 @@ local plugins = {
             "arkav/lualine-lsp-progress",
         },
     },
-
-    "folke/neoconf.nvim",
 
     -- LSP Client
     "neovim/nvim-lspconfig",
@@ -213,11 +243,13 @@ local plugins = {
         "mfussenegger/nvim-lint",
         event = { "BufReadPre", "BufNewFile" },
         config = function()
+            vim.env.ESLINT_D_PPID = vim.fn.getpid()
             local lint = require("lint")
             lint.linters_by_ft = {
                 typescript = { "eslint_d" },
+                -- typescript = { "eslint" },
                 html = { "eslint_d" },
-                -- javascript = { "eslint_d" },
+                javascript = { "eslint_d" },
                 typescriptreact = { "eslint_d" },
                 javascriptreact = { "eslint_d" },
             }
@@ -359,6 +391,78 @@ local plugins = {
         },
     },
     "stevearc/conform.nvim",
+
+    -- AI
+    {
+        "olimorris/codecompanion.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+        },
+        opts = {
+            strategies = {
+                chat = {
+                    adapters = codeCompanionAdapters,
+                    adapter = "openai_compatible",
+                },
+                inline = {
+                    adapters = codeCompanionAdapters,
+                    adapter = "openai_compatible",
+                },
+            },
+            -- NOTE: The log_level is in `opts.opts`
+            opts = {
+                log_level = "DEBUG", -- or "TRACE"
+            },
+        },
+    },
+    {
+        "NickvanDyke/opencode.nvim",
+        dependencies = {
+            -- Recommended for `ask()` and `select()`.
+            -- Required for `snacks` provider.
+            ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
+            -- { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
+        },
+        config = function()
+            ---@type opencode.Opts
+            vim.g.opencode_opts = {
+                -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition".
+            }
+
+            -- Required for `opts.events.reload`.
+            vim.o.autoread = true
+
+            -- Recommended/example keymaps.
+            vim.keymap.set({ "n", "x" }, "<leader>oca", function()
+                require("opencode").ask("@this: ", { submit = true })
+            end, { desc = "Ask opencode" })
+            vim.keymap.set({ "n", "x" }, "<leader>ocs", function()
+                require("opencode").select()
+            end, { desc = "Execute opencode action…" })
+            vim.keymap.set({ "n", "t" }, "<leader>oc", function()
+                require("opencode").toggle()
+            end, { desc = "Toggle opencode" })
+
+            --[[ vim.keymap.set({ "n", "x" }, "go", function()
+                return require("opencode").operator("@this ")
+            end, { expr = true, desc = "Add range to opencode" })
+            vim.keymap.set("n", "goo", function()
+                return require("opencode").operator("@this ") .. "_"
+            end, { expr = true, desc = "Add line to opencode" }) ]]
+
+            --[[ vim.keymap.set("n", "<S-C-u>", function()
+                require("opencode").command("session.half.page.up")
+            end, { desc = "opencode half page up" })
+            vim.keymap.set("n", "<S-C-d>", function()
+                require("opencode").command("session.half.page.down")
+            end, { desc = "opencode half page down" }) ]]
+
+            -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o".
+            --[[ vim.keymap.set("n", "+", "<C-a>", { desc = "Increment", noremap = true })
+            vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement", noremap = true }) ]]
+        end,
+    },
 }
 
 local opts = {}
