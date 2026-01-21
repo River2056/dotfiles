@@ -92,7 +92,7 @@ M.servers = {
 	"yamlls",
 	"cssls",
 	"rust_analyzer",
-	"marksman",
+	-- "marksman",
 	-- "clangd",
 	"zls",
 	"elixirls",

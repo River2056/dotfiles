@@ -32,9 +32,13 @@ vim.opt.signcolumn = "yes:3"
 -- filetypes
 vim.filetype.add({
     extension = {
-        html = "html"
-    }
+        html = "html",
+    },
 })
+
+local cwd = vim.fn.getcwd()
+print(cwd)
+vim.cmd("lcd" .. cwd)
 
 vim.cmd([[colorscheme gruvbox-baby]])
 -- vim.cmd([[colorscheme gruvbox]])

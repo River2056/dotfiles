@@ -184,8 +184,8 @@ local config = {
             },
             project = {
                 referencedLibraries = {
-                    "/Users/kevintung/code/aibank-ms/tfb-nano-message-schema/build/libs/tfb-nano-message-schema-1.0.0-SNAPSHOT.jar",
-                    "/Users/kevintung/code/aibank-ms/shared-components/tfb-esb-component/lib/eai.jar",
+                    --[[ "/Users/kevintung/code/aibank-ms/tfb-nano-message-schema/build/libs/tfb-nano-message-schema-1.0.0-SNAPSHOT.jar",
+                    "/Users/kevintung/code/aibank-ms/shared-components/tfb-esb-component/lib/eai.jar", ]]
                 },
             },
             eclipse = {
@@ -252,7 +252,8 @@ local config = {
         contentProvider = { preferred = "fernflower" },
         extendedClientCapabilities = extendedClientCapabilities,
         settings = {
-            -- ["java.format.settings.url"] = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+            --[[ ["java.format.settings.url"] =
+            "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml", ]]
             -- ["java.format.settings.profile"] = "GoogleStyle",
             ["java.format.settings.url"] = "/Users/kevintung/code/aibank-ms/aibank_workspace/code-style/formatter.xml",
         },

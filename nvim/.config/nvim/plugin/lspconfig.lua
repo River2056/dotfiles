@@ -81,62 +81,6 @@ for _, server in ipairs(lsp.servers) do
     nvim_lsp[server].setup(opts)
 end
 
-local function set_python_path(path)
-    local clients = vim.lsp.get_clients({
-        bufnr = vim.api.nvim_get_current_buf(),
-        name = "basedpyright",
-    })
-    for _, client in ipairs(clients) do
-        if client.settings then
-            client.settings.python = vim.tbl_deep_extend("force", client.settings.python or {}, { pythonPath = path })
-        else
-            client.config.settings =
-                vim.tbl_deep_extend("force", client.config.settings, { python = { pythonPath = path } })
-        end
-        client.notify("workspace/didChangeConfiguration", { settings = nil })
-    end
-end
-
---[[ nvim_lsp.basedpyright.setup({
-    cmd = { "basedpyright-langserver", "--stdio" },
-    filetypes = { "python" },
-    root_markers = {
-        "pyproject.toml",
-        "setup.py",
-        "setup.cfg",
-        "requirements.txt",
-        "Pipfile",
-        "pyrightconfig.json",
-        ".git",
-    },
-    settings = {
-        basedpyright = {
-            analysis = {
-                autoSearchPaths = true,
-                useLibraryCodeForTypes = true,
-                diagnosticMode = "openFilesOnly",
-                typeCheckingMode = "standard", -- ["off", "basic", "standard", "strict"]
-            },
-        },
-    },
-    on_attach = function(client, bufnr)
-        vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
-            client:exec_cmd({
-                command = "basedpyright.organizeimports",
-                arguments = { vim.uri_from_bufnr(bufnr) },
-            })
-        end, {
-            desc = "Organize Imports",
-        })
-
-        vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
-            desc = "Reconfigure basedpyright with the provided python path",
-            nargs = 1,
-            complete = "file",
-        })
-    end,
-}) ]]
-
 -- specific additional configs per language
 local libs = vim.api.nvim_get_runtime_file("", true)
 table.insert(libs, "${3rd}/love2d/library")
@@ -159,93 +103,6 @@ nvim_lsp.lua_ls.setup({
     },
 })
 
---[[ nvim_lsp.ts_ls.setup({
-	-- on_attach = lsp.on_attach,
-	init_options = { hostInfo = "neovim" },
-	filetypes = {
-		"javascript",
-		"javascriptreact",
-		"javascript.jsx",
-		"typescript",
-		"typescriptreact",
-		"typescript.tsx",
-	},
-	cmd = { "typescript-language-server", "--stdio" },
-	root_dir = function(bufnr, on_dir)
-		-- The project root is where the LSP can be started from
-		-- As stated in the documentation above, this LSP supports monorepos and simple projects.
-		-- We select then from the project root, which is identified by the presence of a package
-		-- manager lock file.
-		local root_markers =
-			{ "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock", "package.json" }
-		-- Give the root markers equal priority by wrapping them in a table
-		root_markers = vim.fn.has("nvim-0.11.3") == 1 and { root_markers } or root_markers
-		local project_root = vim.fs.root(bufnr, root_markers)
-		if not project_root then
-			return
-		end
-
-		-- on_dir(project_root)
-		return project_root
-	end,
-	handlers = {
-		-- handle rename request for certain code actions like extracting functions / types
-		["_typescript.rename"] = function(_, result, ctx)
-			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
-			vim.lsp.util.show_document({
-				uri = result.textDocument.uri,
-				range = {
-					start = result.position,
-					["end"] = result.position,
-				},
-			}, client.offset_encoding)
-			vim.lsp.buf.rename()
-			return vim.NIL
-		end,
-	},
-	commands = {
-		["editor.action.showReferences"] = function(command, ctx)
-			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
-			local file_uri, position, references = unpack(command.arguments)
-
-			local quickfix_items = vim.lsp.util.locations_to_items(references, client.offset_encoding)
-			vim.fn.setqflist({}, " ", {
-				title = command.title,
-				items = quickfix_items,
-				context = {
-					command = command,
-					bufnr = ctx.bufnr,
-				},
-			})
-
-			vim.lsp.util.show_document({
-				uri = file_uri,
-				range = {
-					start = position,
-					["end"] = position,
-				},
-			}, client.offset_encoding)
-
-			vim.cmd("botright copen")
-		end,
-	},
-	on_attach = function(client, bufnr)
-		-- ts_ls provides `source.*` code actions that apply to the whole file. These only appear in
-		-- `vim.lsp.buf.code_action()` if specified in `context.only`.
-		vim.api.nvim_buf_create_user_command(bufnr, "LspTypescriptSourceAction", function()
-			local source_actions = vim.tbl_filter(function(action)
-				return vim.startswith(action, "source.")
-			end, client.server_capabilities.codeActionProvider.codeActionKinds)
-
-			vim.lsp.buf.code_action({
-				context = {
-					only = source_actions,
-				},
-			})
-		end, {})
-	end,
-}) ]]
-
 -- If you are using mason.nvim, you can get the ts_plugin_path like this
 -- For Mason v1,
 -- local mason_registry = require('mason-registry')
@@ -258,7 +115,7 @@ nvim_lsp.lua_ls.setup({
 -- IMPORTANT: nvchad users cannot use `$MASON` directly as the option is set to `skip`, see: https://github.com/NvChad/NvChad/blob/29ebe31ea6a4edf351968c76a93285e6e108ea08/lua/nvchad/configs/mason.lua#L4
 
 local vue_language_server_path = "/Users/kevintung/.nvm/versions/node/v23.8.0/bin/vue-language-server"
-local tsserver_filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" }
+local tsserver_filetypes = { "typescript", "typescriptreact", "javascript", "vue" }
 local vue_plugin = {
     name = "@vue/typescript-plugin",
     location = vue_language_server_path,
@@ -360,34 +217,6 @@ local vtsls_config = {
     },
     filetypes = tsserver_filetypes,
 }
-
-local function get_diagnostic_at_cursor()
-    local cur_buf = api.nvim_get_current_buf()
-    local line, col = unpack(api.nvim_win_get_cursor(0))
-    local entrys = diagnostic.get(cur_buf, { lnum = line - 1 })
-    local res = {}
-    for _, v in pairs(entrys) do
-        if v.col <= col and v.end_col >= col then
-            table.insert(res, {
-                code = v.code,
-                message = v.message,
-                range = {
-                    ["start"] = {
-                        character = v.col,
-                        line = v.lnum,
-                    },
-                    ["end"] = {
-                        character = v.end_col,
-                        line = v.end_lnum,
-                    },
-                },
-                severity = v.severity,
-                source = v.source or nil,
-            })
-        end
-    end
-    return res
-end
 
 local ts_ls_config = {
     init_options = {
