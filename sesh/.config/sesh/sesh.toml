@@ -1,0 +1,24 @@
+[[session]]
+name = "tfb"
+path = "~/code"
+windows = [ "tfb-backend", "tfb-frontend", "docs" ]
+
+[[session]]
+name = "download"
+path = "~/downloads"
+startup_command = "y"
+
+[[window]]
+name = "tfb-backend"
+path = "~/code/aibank-ms"
+startup_script = "git pull"
+
+[[window]]
+name = "tfb-frontend"
+path = "~/code/nanobankapp"
+startup_script = "git pull"
+
+[[window]]
+name = "docs"
+path = "~/docs/02-SA"
+startup_script = "svn update"
