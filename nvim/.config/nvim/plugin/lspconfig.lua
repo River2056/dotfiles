@@ -114,6 +114,43 @@ nvim_lsp.lua_ls.setup({
 
 -- IMPORTANT: nvchad users cannot use `$MASON` directly as the option is set to `skip`, see: https://github.com/NvChad/NvChad/blob/29ebe31ea6a4edf351968c76a93285e6e108ea08/lua/nvchad/configs/mason.lua#L4
 
+local uv = vim.uv or vim.loop
+
+local function file_exists(path)
+    return path and uv and uv.fs_stat(path) ~= nil
+end
+
+local function current_buf_path()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    if name == "" then
+        return nil
+    end
+    return name
+end
+
+local function workspace_tsserver_path()
+    local fname = current_buf_path()
+    if not fname then
+        return nil
+    end
+
+    local root = vim.fs.root(fname, { "angular.json", "tsconfig.json" })
+        or vim.fs.root(fname, { "package.json" })
+        or vim.fs.root(fname, { ".git" })
+
+    if not root then
+        return nil
+    end
+
+    local tsserver = vim.fs.joinpath(root, "node_modules", "typescript", "lib", "tsserver.js")
+    if file_exists(tsserver) then
+        return tsserver
+    end
+
+    return nil
+end
+
 local vue_language_server_path = "/Users/kevintung/.nvm/versions/node/v23.8.0/bin/vue-language-server"
 local tsserver_filetypes = { "typescript", "typescriptreact", "javascript", "vue" }
 local vue_plugin = {
@@ -225,6 +262,14 @@ local ts_ls_config = {
             vue_plugin,
         },
     },
+    before_init = function(_, config)
+        local tsserver = workspace_tsserver_path()
+        if tsserver then
+            config.init_options = config.init_options or {}
+            config.init_options.tsserver = config.init_options.tsserver or {}
+            config.init_options.tsserver.path = tsserver
+        end
+    end,
     filetypes = tsserver_filetypes,
     cmd = { "typescript-language-server", "--stdio" },
     on_attach = lsp.on_attach,
