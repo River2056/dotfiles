@@ -44,7 +44,7 @@ local codeCompanionAdapters = {
 }
 
 local plugins = {
-    "nvim-lua/plenary.nvim",     -- Common utilities
+    "nvim-lua/plenary.nvim",        -- Common utilities
     "kyazdani42/nvim-tree.lua",
     "kyazdani42/nvim-web-devicons", -- File icons
     "nvim-telescope/telescope.nvim",
@@ -134,7 +134,7 @@ local plugins = {
         end,
         dependencies = {
             "nvim-treesitter/nvim-treesitter", -- optional
-            "nvim-tree/nvim-web-devicons", -- optional
+            "nvim-tree/nvim-web-devicons",     -- optional
         },
     },
 
@@ -377,7 +377,7 @@ local plugins = {
             -- If you want to customize the image showed when running this plugin
             image = {
                 darkmode = false, -- Enable or disable darkmode
-                format = "png", -- Choose between png or svg
+                format = "png",   -- Choose between png or svg
 
                 -- This is a default implementation of using nsxiv to open the resultant image
                 -- Edit the string to use your preferred app to open the image (as if it were a command line)
