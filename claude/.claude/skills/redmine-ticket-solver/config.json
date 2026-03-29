@@ -1,0 +1,10 @@
+{
+  "redmine_url": "https://your-redmine.example.com",
+  "username": "your_username",
+  "password": "your_password",
+  "nanobankapp": "/absolute/path/to/nanobankapp",
+  "aibank-ms": "/absolute/path/to/aibank-ms",
+  "fbplus": "/absolute/path/to/fbplus",
+  "looks-through": ["nanobankapp", "aibank-ms", "fbplus"],
+  "output-path": "/absolute/path/to/output"
+}
