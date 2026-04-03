@@ -1,0 +1,19 @@
+{
+  "lastChangelogVersion": "0.64.0",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:pi-powerline-footer",
+    "npm:@ifi/oh-pi-themes",
+    "npm:pi-vim",
+    "npm:@ifi/pi-plan",
+    "npm:pi-brain",
+    "npm:pi-context"
+  ],
+  "skills": [
+    "~/.claude/skills"
+  ],
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
+  "theme": "gruvbox-dark",
+  "defaultThinkingLevel": "medium"
+}
