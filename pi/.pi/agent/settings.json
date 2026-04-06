@@ -8,13 +8,15 @@
     "npm:@ifi/pi-plan",
     "npm:pi-brain",
     "npm:pi-context",
-    "npm:pi-telebridge"
+    "npm:pi-telebridge",
+    "npm:@ollama/pi-web-search",
+    "https://github.com/davebcn87/pi-autoresearch"
   ],
   "skills": [
     "~/.claude/skills"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultProvider": "ollama",
+  "defaultModel": "gemma4:e2b",
   "theme": "gruvbox-dark",
   "defaultThinkingLevel": "medium"
 }
