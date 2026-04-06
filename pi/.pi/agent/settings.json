@@ -9,7 +9,6 @@
     "npm:pi-brain",
     "npm:pi-context",
     "npm:pi-telebridge",
-    "npm:@ollama/pi-web-search",
     "https://github.com/davebcn87/pi-autoresearch"
   ],
   "skills": [
