@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.78.0",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-powerline-footer",
@@ -9,13 +9,15 @@
     "npm:pi-brain",
     "npm:pi-context",
     "npm:pi-telebridge",
-    "https://github.com/davebcn87/pi-autoresearch"
+    "https://github.com/davebcn87/pi-autoresearch",
+    "npm:@sherif-fanous/pi-rtk",
+    "npm:pi-rtk-rewrite"
   ],
   "skills": [
     "~/.claude/skills"
   ],
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultModel": "gpt-5.5",
   "theme": "gruvbox-dark",
   "defaultThinkingLevel": "medium",
   "quietStartup": false

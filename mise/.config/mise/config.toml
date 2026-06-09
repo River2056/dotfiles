@@ -1,0 +1,64 @@
+[tools]
+java = "openjdk-17.0.2"
+
+[tasks.ar]
+description = "auto add route"
+run = "echo $PASSWORD | sudo -S ~/addRoute.sh"
+
+[tasks.new]
+description = "run a new tmux session"
+run = "tmux new-session -d -s $1"
+
+[tasks.rename]
+description = "rename current tmux pane"
+run = [
+    "name=(${(@s:/:)$(pwd)})",
+    "session_name=${name[-1]}",
+    "tmux rename-window $session_name"
+]
+
+[tasks.docs]
+description = "fund docs"
+run = "find ~/docs -iname \"*$1*\" | fzf | xargs -I {} open {}"
+
+# aibank-ms
+[tasks.app]
+description = "run standard aibank-ms app"
+run = "app-runner -name aibank -fe -ne"
+
+[tasks.dev]
+description = "activate dev environment for aibank-ms"
+run = "tmuxinator start dev"
+
+[tasks.eai]
+description = "run eai.jar"
+run = [
+    "original_path=$(pwd)",
+    "cd /Users/kevintung/code/aibank-ms/tfb-nano-message-schema && ./eai_build.sh",
+    "cd $original_path"
+]
+
+# fbplus ovs
+[tasks.ovsdev]
+description = "activate fbplus ovs environment"
+run = "tmuxinator start ovsdev"
+
+[tasks.ovsapp]
+description = "run fblpus app"
+run = "app-runner -name fbplus -fe -ne"
+
+[tasks.ovseai]
+description = "run ovs eai"
+run = [
+    "original_path=$(pwd)",
+    "cd /Users/kevintung/code/fbplus-ms-ovs/tfb-fbplus-message-schema && ./eai_build.sh",
+    "cd $original_path"
+]
+
+[tasks.activate]
+description = "activate a python venv environment"
+run = [
+    "original_path=$(pwd)",
+    "source .venv/bin/activate",
+    "cd $original_path"
+]

@@ -96,6 +96,7 @@ M.servers = {
 	-- "clangd",
 	"zls",
 	"elixirls",
+	"ols",
 }
 
 return M

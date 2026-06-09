@@ -1,0 +1,21 @@
+onboarding = false
+
+[theme]
+name = "tokyo-night"
+
+[terminal]
+default_shell = "zsh"
+
+[keys]
+prefix = "ctrl+s"
+new_tab = "prefix+c"
+next_tab = "shift+cmd+>"
+previous_tab = "shift+cmd+<"
+
+split_vertical = "prefix+|"
+split_horizontal = "prefix+-"
+
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
