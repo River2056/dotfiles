@@ -313,8 +313,20 @@ local plugins = {
                 return false
             end
 
+            local eslint_filetypes = {
+                html = true,
+                javascript = true,
+                javascriptreact = true,
+                typescript = true,
+                typescriptreact = true,
+            }
+
             local function try_eslint()
                 local bufnr = vim.api.nvim_get_current_buf()
+                if vim.bo[bufnr].buftype ~= "" or not eslint_filetypes[vim.bo[bufnr].filetype] then
+                    return
+                end
+
                 if has_eslint_config(bufnr) then
                     lint.try_lint("eslint_d")
                 end
