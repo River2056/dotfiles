@@ -103,7 +103,187 @@ nvim_lsp.lua_ls.setup({
     },
 })
 
-nvim_lsp.ts_ls.setup({
+-- If you are using mason.nvim, you can get the ts_plugin_path like this
+-- For Mason v1,
+-- local mason_registry = require('mason-registry')
+-- local vue_language_server_path = mason_registry.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+-- For Mason v2,
+-- local vue_language_server_path = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server'
+-- or even
+-- local vue_language_server_path = vim.fn.stdpath('data') .. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+
+-- IMPORTANT: nvchad users cannot use `$MASON` directly as the option is set to `skip`, see: https://github.com/NvChad/NvChad/blob/29ebe31ea6a4edf351968c76a93285e6e108ea08/lua/nvchad/configs/mason.lua#L4
+
+local uv = vim.uv or vim.loop
+
+local function file_exists(path)
+    return path and uv and uv.fs_stat(path) ~= nil
+end
+
+local function current_buf_path()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    if name == "" then
+        return nil
+    end
+    return name
+end
+
+local function workspace_tsserver_path()
+    local fname = current_buf_path()
+    if not fname then
+        return nil
+    end
+
+    local root = vim.fs.root(fname, { "angular.json", "tsconfig.json" })
+        or vim.fs.root(fname, { "package.json" })
+        or vim.fs.root(fname, { ".git" })
+
+    if not root then
+        return nil
+    end
+
+    local tsserver = vim.fs.joinpath(root, "node_modules", "typescript", "lib", "tsserver.js")
+    if file_exists(tsserver) then
+        return tsserver
+    end
+
+    return nil
+end
+
+local vue_language_server_path = "/Users/kevintung/.nvm/versions/node/v23.8.0/bin/vue-language-server"
+local tsserver_filetypes = { "typescript", "typescriptreact", "javascript", "vue" }
+local vue_plugin = {
+    name = "@vue/typescript-plugin",
+    location = vue_language_server_path,
+    languages = { "vue" },
+    configNamespace = "typescript",
+}
+local vtsls_config = {
+    settings = {
+        vtsls = {
+            tsserver = {
+                globalPlugins = {
+                    vue_plugin,
+                },
+            },
+        },
+        vue = {
+            format = {
+                enable = true,
+                options = {
+                    printWidth = 120,
+                    singleQuote = true,
+                    trailingComma = "none",
+                    tabWidth = 2,
+                    useTabs = false,
+                    bracketSpacing = true,
+                    arrowParens = "always",
+                    htmlWhitespaceSensitivity = "strict",
+                    endOfLine = "lf",
+                    semi = true,
+                    quoteProps = "as-needed",
+                    plugins = { "prettier-plugin-organize-imports" },
+                    overrides = {
+                        {
+                            files = "*.vue",
+                            options = {
+                                parser = "vue",
+                                printWidth = 200,
+                                vueIndentScriptAndStyle = true,
+                            },
+                        },
+                        {
+                            files = "*.[m]js",
+                            options = {
+                                parser = "babel",
+                            },
+                        },
+                        {
+                            files = ".prettierrc.ts",
+                            options = {
+                                parser = "typescript",
+                            },
+                        },
+                        {
+                            files = "*.messages.ts",
+                            options = {
+                                parser = "typescript",
+                                printWidth = 800,
+                                semi = true,
+                            },
+                        },
+                        {
+                            files = "*.ts",
+                            options = {
+                                parser = "typescript",
+                                semi = true,
+                            },
+                        },
+                        {
+                            files = "*.html",
+                            options = {
+                                parser = "html",
+                                printWidth = 1000,
+                                bracketSameLine = true,
+                                singleAttributePerLine = false,
+                            },
+                        },
+                        {
+                            files = "*.cjs",
+                            options = {
+                                parser = "babel",
+                            },
+                        },
+                        {
+                            files = "*.json",
+                            options = {
+                                parser = "json",
+                            },
+                        },
+                        {
+                            files = "*.md",
+                            options = {
+                                parser = "markdown",
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    filetypes = tsserver_filetypes,
+}
+
+local ts_ls_config = {
+    root_dir = function(bufnr, on_dir)
+        local root = vim.fs.root(bufnr, {
+            "angular.json",
+            "tsconfig.json",
+            "jsconfig.json",
+            "package.json",
+            ".git",
+        })
+        local filename = vim.api.nvim_buf_get_name(bufnr)
+
+        on_dir(root or vim.fs.dirname(filename))
+    end,
+    init_options = {
+        hostInfo = "neovim",
+        plugins = {
+            vue_plugin,
+        },
+    },
+    before_init = function(_, config)
+        local tsserver = workspace_tsserver_path()
+        if tsserver then
+            config.init_options = config.init_options or {}
+            config.init_options.tsserver = config.init_options.tsserver or {}
+            config.init_options.tsserver.path = tsserver
+        end
+    end,
+    filetypes = tsserver_filetypes,
+    cmd = { "typescript-language-server", "--stdio" },
     on_attach = lsp.on_attach,
     capabilities = lsp.capabilities,
     filetypes = {

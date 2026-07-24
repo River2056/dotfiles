@@ -5,6 +5,10 @@
   "tui.editor.cursorRight": ["right", "alt+l"],
   "tui.editor.cursorWordLeft": ["alt+left", "alt+b"],
   "tui.editor.cursorWordRight": ["alt+right", "alt+w"],
-  "tui.select.up": ["up", "ctrl+shift+k"],
-  "tui.select.down": ["down", "ctrl+shift+j"]
+  "tui.select.up": ["up", "ctrl+p"],
+  "tui.select.down": ["down", "ctrl+n"],
+  "app.model.cycleForward": "alt+n",
+  "app.session.togglePath": "alt+shift+f",
+  "app.session.toggleNamedFilter": "alt+shift+n",
+  "app.models.toggleProvider": "alt+shift+p"
 }

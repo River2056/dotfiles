@@ -44,7 +44,7 @@ local codeCompanionAdapters = {
 }
 
 local plugins = {
-    "nvim-lua/plenary.nvim",        -- Common utilities
+    "nvim-lua/plenary.nvim",     -- Common utilities
     "kyazdani42/nvim-tree.lua",
     "kyazdani42/nvim-web-devicons", -- File icons
     "nvim-telescope/telescope.nvim",
@@ -134,7 +134,7 @@ local plugins = {
         end,
         dependencies = {
             "nvim-treesitter/nvim-treesitter", -- optional
-            "nvim-tree/nvim-web-devicons",     -- optional
+            "nvim-tree/nvim-web-devicons", -- optional
         },
     },
 
@@ -255,17 +255,89 @@ local plugins = {
             }
 
             local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+            local eslint_config_files = {
+                "eslint.config.js",
+                "eslint.config.mjs",
+                "eslint.config.cjs",
+                "eslint.config.ts",
+                "eslint.config.mts",
+                "eslint.config.cts",
+                ".eslintrc",
+                ".eslintrc.js",
+                ".eslintrc.cjs",
+                ".eslintrc.json",
+                ".eslintrc.yaml",
+                ".eslintrc.yml",
+            }
 
-            vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave", "TextChanged" }, {
+            local function package_has_eslint_config(directory)
+                local package_json = vim.fs.joinpath(directory, "package.json")
+                if not vim.uv.fs_stat(package_json) then
+                    return false
+                end
+
+                local read_ok, lines = pcall(vim.fn.readfile, package_json)
+                if not read_ok then
+                    return false
+                end
+
+                local decode_ok, package = pcall(vim.json.decode, table.concat(lines, "\n"))
+                return decode_ok and type(package) == "table" and package.eslintConfig ~= nil
+            end
+
+            local function has_eslint_config(bufnr)
+                local filename = vim.api.nvim_buf_get_name(bufnr)
+                if filename == "" then
+                    return false
+                end
+
+                local directory = vim.fs.dirname(filename)
+                local config = vim.fs.find(eslint_config_files, {
+                    path = directory,
+                    upward = true,
+                    type = "file",
+                })[1]
+                if config then
+                    return true
+                end
+
+                if package_has_eslint_config(directory) then
+                    return true
+                end
+                for parent in vim.fs.parents(directory) do
+                    if package_has_eslint_config(parent) then
+                        return true
+                    end
+                end
+
+                return false
+            end
+
+            local function try_eslint()
+                local bufnr = vim.api.nvim_get_current_buf()
+                if has_eslint_config(bufnr) then
+                    lint.try_lint("eslint_d")
+                end
+            end
+
+            vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
                 group = lint_augroup,
-                callback = function()
-                    lint.try_lint()
+                callback = try_eslint,
+            })
+
+            vim.api.nvim_create_autocmd("User", {
+                group = lint_augroup,
+                pattern = "GuardFmt",
+                callback = function(args)
+                    if args.data and args.data.status == "done" then
+                        try_eslint()
+                    end
                 end,
             })
 
-            vim.keymap.set("n", "<leader>l", function()
-                lint.try_lint()
-            end, { desc = "Trigger linting for current file" })
+            vim.keymap.set("n", "<leader>l", try_eslint, {
+                desc = "Lint current file when ESLint is configured",
+            })
         end,
     },
     {
@@ -377,7 +449,7 @@ local plugins = {
             -- If you want to customize the image showed when running this plugin
             image = {
                 darkmode = false, -- Enable or disable darkmode
-                format = "png",   -- Choose between png or svg
+                format = "png", -- Choose between png or svg
 
                 -- This is a default implementation of using nsxiv to open the resultant image
                 -- Edit the string to use your preferred app to open the image (as if it were a command line)
