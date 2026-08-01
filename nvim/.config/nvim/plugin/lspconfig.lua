@@ -296,7 +296,7 @@ local ts_ls_config = {
     },
     cmd = { "typescript-language-server", "--stdio" },
     root_dir = util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git") or vim.loop.cwd(),
-})
+}
 
 --[[ nvim_lsp.eslint.setup({
     -- cmd = { "vscode-eslint-language-server", "--stdio" },
