@@ -3,6 +3,8 @@ function setabbr(filetype, abbr, expr)
 	vim.cmd("autocmd FileType " .. filetype .. " iabbrev " .. abbr .. " " .. expr)
 end
 
+vim.cmd("iabbrev todo TODO:")
+
 setabbr("java", "sout", "System.out.println")
 setabbr("java", "souf", "System.out.printf()<esc>F(a")
 setabbr("java", "pcls", 'public class <esc>"%pvbbdbbv^wwdA {<cr>}<esc>O')
