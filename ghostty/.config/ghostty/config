@@ -19,3 +19,5 @@ window-padding-balance = true
 keybind = super+r=reload_config
 keybind = super+i=inspector:toggle
 
+# Temporary workaround for phantom mouse events reaching tmux.
+mouse-reporting = false
