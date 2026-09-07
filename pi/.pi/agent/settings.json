@@ -1,10 +1,9 @@
 {
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.84.4",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-powerline-footer",
     "npm:@ifi/oh-pi-themes",
-    "npm:pi-vim",
     "npm:@ifi/pi-plan",
     "npm:pi-brain",
     "npm:pi-context",
