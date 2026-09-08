@@ -82,56 +82,87 @@ local function on_attach(client, bufnr)
     vim.lsp.codelens.refresh()
 end
 
+local workspace_path
+local configuration
 if vim.fn.has("mac") == 1 then
-    WORKSPACE_PATH = home .. "/workspace"
+    workspace_path = home .. "/workspace"
     configuration = "mac"
 elseif vim.fn.has("unix") == 1 then
-    WORKSPACE_PATH = home .. "/workspace"
+    workspace_path = home .. "/workspace"
     configuration = "linux"
 elseif vim.fn.has("win32") == 1 then
-    WORKSPACE_PATH = home .. "/workspace"
+    workspace_path = home .. "/workspace"
     configuration = "win"
 else
     print("Unsupported system")
+    return
 end
 
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-local project_path_prefix = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h")
-local root = vim.fs.root(0, { "gradlew", ".git", "mvnw" })
-local rootdir = root ~= nil and root or require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
-local fix_path = rootdir:gsub(project_path_prefix, "")
+local function find_project_root(bufnr)
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    local git_root = vim.fs.root(filename, { ".git" })
 
---[[ print(project_path_prefix)
-print(rootdir)
-print(fix_path) ]]
+    if git_root then
+        for name, type in vim.fs.dir(git_root) do
+            if type == "directory" and name:match("_workspace$") then
+                local aggregate_root = vim.fs.joinpath(git_root, name)
+                if vim.fn.filereadable(vim.fs.joinpath(aggregate_root, "settings.gradle")) == 1 then
+                    -- The aggregate build includes sibling projects outside its own
+                    -- directory. Use the repository as the Eclipse workspace root so
+                    -- JDTLS does not delete those projects on the next startup.
+                    return git_root, aggregate_root
+                end
+            end
+        end
+    end
 
--- local workspace_dir = WORKSPACE_PATH .. project_name
-local workspace_dir = WORKSPACE_PATH .. fix_path
--- local workspace_dir = WORKSPACE_PATH .. project_path_prefix
+    return vim.fs.root(filename, { "settings.gradle", "settings.gradle.kts", "gradlew", "mvnw", ".git" })
+end
+
+local rootdir, aggregate_root = find_project_root(0)
+if not rootdir then
+    vim.notify("Unable to determine the Java project root", vim.log.levels.ERROR)
+    return
+end
+
+local import_exclusions
+if aggregate_root then
+    import_exclusions = {
+        rootdir .. "/**",
+        "!" .. aggregate_root,
+    }
+end
+
+local project_name = vim.fn.fnamemodify(rootdir, ":t")
+local workspace_id = project_name .. "-" .. vim.fn.sha256(rootdir):sub(1, 12)
+local workspace_dir = vim.fs.joinpath(workspace_path, workspace_id)
 
 JAVA_DAP_ACTIVE = true
 
 local bundles = {}
 
+local function append_jars(pattern, excluded_filenames)
+    for _, bundle in ipairs(vim.fn.glob(pattern, true, true)) do
+        local filename = vim.fs.basename(bundle)
+        if not excluded_filenames or not excluded_filenames[filename] then
+            table.insert(bundles, bundle)
+        end
+    end
+end
+
 if JAVA_DAP_ACTIVE then
-    vim.list_extend(bundles, vim.split(vim.fn.glob(vscode_java_test_path .. "server/*.jar", true), "\n"))
-    vim.list_extend(
-        bundles,
-        vim.split(
-            vim.fn.glob(
-                java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar",
-                true
-            ),
-            "\n"
-        )
-    )
+    append_jars(vscode_java_test_path .. "server/*.jar", {
+        ["com.microsoft.java.test.runner-jar-with-dependencies.jar"] = true,
+        ["jacocoagent.jar"] = true,
+    })
+    append_jars(java_debug_path .. "com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar")
 
     --[[ for k, v in ipairs(bundles) do
         print(v)
     end ]]
 end
 
-vim.list_extend(bundles, vim.split(vim.fn.glob(config_path .. "*.jar", true), "\n"))
+append_jars(vim.fs.joinpath(config_path, "*.jar"))
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
     -- name = "jdtls",
@@ -145,8 +176,8 @@ local config = {
         "-Declipse.application=org.eclipse.jdt.ls.core.id1",
         "-Dosgi.bundles.defaultStartLevel=4",
         "-Declipse.product=org.eclipse.jdt.ls.core.product",
-        "-Dlog.protocol=true",
-        "-Dlog.level=ALL",
+        "-Dlog.protocol=false",
+        "-Dlog.level=INFO",
         "-Xmx4g",
         "-XX:AdaptiveSizePolicyWeight=90",
         "-XX:GCTimeRatio=4",
@@ -172,7 +203,7 @@ local config = {
     on_attach = on_attach,
     capabilities = capabilities,
 
-    root_dir = vim.fs.root(0, { "gradlew", ".git", "mvnw" }),
+    root_dir = rootdir,
 
     settings = {
         java = {
@@ -204,7 +235,12 @@ local config = {
                     }, ]]
                     {
                         name = "JavaSE-17",
+                        path = c.jdtls_jdk17_path,
+                    },
+                    {
+                        name = "JavaSE-21",
                         path = c.jdtls_jdk21_path,
+                        default = true,
                     },
                     --[[ {
 						name = "JavaSE-1.8",
@@ -223,6 +259,16 @@ local config = {
             },
             gradle = {
                 enabled = true,
+            },
+            import = {
+                exclusions = import_exclusions,
+                gradle = {
+                    -- The aggregate build has unresolved root annotation-processor
+                    -- dependencies. Skip JDTLS's APT model so project import can finish.
+                    annotationProcessing = {
+                        enabled = false,
+                    },
+                },
             },
             maven = {
                 downloadSources = true,
@@ -273,6 +319,33 @@ local config = {
     -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
     init_options = {
         bundles = bundles,
+        -- Import-affecting settings must be sent with initialize. Sending them
+        -- only through didChangeConfiguration is too late for the first import.
+        settings = {
+            java = {
+                configuration = {
+                    runtimes = {
+                        {
+                            name = "JavaSE-17",
+                            path = c.jdtls_jdk17_path,
+                        },
+                        {
+                            name = "JavaSE-21",
+                            path = c.jdtls_jdk21_path,
+                            default = true,
+                        },
+                    },
+                },
+                import = {
+                    exclusions = import_exclusions,
+                    gradle = {
+                        annotationProcessing = {
+                            enabled = false,
+                        },
+                    },
+                },
+            },
+        },
     },
 }
 
