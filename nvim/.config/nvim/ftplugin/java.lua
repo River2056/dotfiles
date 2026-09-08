@@ -385,7 +385,137 @@ dap.configurations.java = {
 }
 
 -- jdtls wipe and restart
-vim.keymap.set("n", "<Leader>jkl", ":JdtWipeDataAndRestart<Return>")
+local function normalize_path(path)
+    return vim.fs.normalize(vim.fn.fnamemodify(path, ":p"))
+end
+
+local function get_jdtls_data_dir(client)
+    local cmd = client.config.cmd
+
+    if type(cmd) ~= "table" then
+        return nil
+    end
+
+    for index, argument in ipairs(cmd) do
+        if argument == "-data" or argument == "--data" then
+            return cmd[index + 1]
+        end
+    end
+
+    return nil
+end
+
+local function is_safe_workspace_dir(data_dir)
+    local workspace_root = normalize_path(vim.fn.stdpath("data") .. "/mason/packages/workspace")
+    local normalized_data_dir = normalize_path(data_dir)
+
+    return normalized_data_dir:sub(1, #workspace_root + 1) == workspace_root .. "/"
+end
+
+local function same_root(left, right)
+    if not left or not right then
+        return false
+    end
+
+    return normalize_path(left) == normalize_path(right)
+end
+
+local function safe_wipe_data_and_restart()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local clients = vim.lsp.get_clients({
+        bufnr = bufnr,
+        name = "jdtls",
+    })
+
+    if #clients == 0 then
+        vim.notify("No JDTLS client is attached to this buffer", vim.log.levels.ERROR)
+        return
+    end
+
+    if #clients > 1 then
+        vim.notify("Multiple JDTLS clients are attached; restart aborted", vim.log.levels.ERROR)
+        return
+    end
+
+    local client = clients[1]
+    local data_dir = get_jdtls_data_dir(client)
+
+    if not data_dir then
+        vim.notify("Unable to determine the JDTLS data directory", vim.log.levels.ERROR)
+        return
+    end
+
+    if not is_safe_workspace_dir(data_dir) then
+        vim.notify("Refusing to delete unexpected JDTLS data directory: " .. data_dir, vim.log.levels.ERROR)
+        return
+    end
+
+    local client_config = client.config
+    local root_dir = client.config.root_dir
+    local attached_buffers = vim.lsp.get_buffers_by_client_id(client.id)
+
+    vim.ui.select({ "Yes", "No" }, {
+        prompt = "Wipe and restart JDTLS workspace: " .. data_dir .. "? ",
+    }, function(choice)
+        if choice ~= "Yes" then
+            return
+        end
+
+        vim.schedule(function()
+            client:stop()
+
+            local stopped = vim.wait(30000, function()
+                return vim.lsp.get_client_by_id(client.id) == nil
+            end, 100)
+
+            if not stopped then
+                vim.notify(
+                    "JDTLS did not stop within 30 seconds; workspace was not deleted and restart was aborted",
+                    vim.log.levels.ERROR
+                )
+                return
+            end
+
+            for _, other_client in ipairs(vim.lsp.get_clients({ name = "jdtls" })) do
+                if same_root(other_client.config.root_dir, root_dir) then
+                    vim.notify(
+                        "Another JDTLS client still owns this project; workspace was not deleted",
+                        vim.log.levels.ERROR
+                    )
+                    return
+                end
+            end
+
+            if vim.fn.delete(data_dir, "rf") ~= 0 then
+                vim.notify("Failed to delete JDTLS workspace: " .. data_dir, vim.log.levels.ERROR)
+                return
+            end
+
+            local new_client_id = vim.lsp.start(client_config, { bufnr = bufnr })
+
+            if not new_client_id then
+                vim.notify("JDTLS workspace was removed, but restart failed", vim.log.levels.ERROR)
+                return
+            end
+
+            for _, buffer in ipairs(attached_buffers) do
+                if vim.api.nvim_buf_is_valid(buffer) then
+                    vim.lsp.buf_attach_client(buffer, new_client_id)
+                end
+            end
+        end)
+    end)
+end
+
+vim.api.nvim_buf_create_user_command(0, "JdtSafeWipeDataAndRestart", safe_wipe_data_and_restart, {
+    desc = "Safely wipe the current JDTLS workspace and restart",
+    force = true,
+})
+
+vim.keymap.set("n", "<Leader>jkl", "<Cmd>JdtSafeWipeDataAndRestart<CR>", {
+    buffer = true,
+    silent = true,
+})
 
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
