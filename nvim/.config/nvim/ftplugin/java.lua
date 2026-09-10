@@ -63,6 +63,18 @@ end
 
 local function on_attach(client, bufnr)
     lsp_keymaps(bufnr)
+    require("kevin.lsp_request_progress").setup({
+        bufnr = bufnr,
+        client_name = "jdtls",
+        delay_ms = 300,
+        title = "JDTLS",
+        messages = {
+            ["textDocument/definition"] = "Go to definition is still running...",
+            ["textDocument/declaration"] = "Go to declaration is still running...",
+            ["textDocument/implementation"] = "Go to implementation is still running...",
+            ["textDocument/references"] = "Find references is still running...",
+        },
+    })
 
     -- formatting
     if client.server_capabilities.documentFormattingProvider then
@@ -178,7 +190,9 @@ local config = {
         "-Dlog.protocol=false",
         "-Dlog.level=INFO",
         "-Xmx4g",
-        "-Xms512m",
+        -- JDTLS's launcher defaults to a 1 GiB initial heap. Large aggregate
+        -- workspaces otherwise fill the small old generation and pause to grow it.
+        "-Xms1g",
         "-XX:AdaptiveSizePolicyWeight=90",
         "-XX:GCTimeRatio=4",
         "-XX:+UseParallelGC",
