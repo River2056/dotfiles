@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "0.85.1",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-powerline-footer",
@@ -16,7 +16,7 @@
     "~/.claude/skills"
   ],
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultModel": "gpt-5.6-sol",
   "theme": "gruvbox-dark",
   "defaultThinkingLevel": "medium",
   "quietStartup": false
