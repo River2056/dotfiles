@@ -76,10 +76,9 @@ local function on_attach(client, bufnr)
         })
     end
 
+    -- Preserve automatic hot-code replacement. setup_dap() is idempotent;
+    -- nvim-jdtls provides lazy main-class discovery through its DAP provider.
     require("jdtls").setup_dap({ hotcodereplace = "auto" })
-    require("jdtls.dap").setup_dap_main_class_configs()
-    -- require("jdtls.setup").add_commands()
-    vim.lsp.codelens.refresh()
 end
 
 if vim.fn.has("mac") == 1 then
@@ -148,6 +147,7 @@ local config = {
         "-Dlog.protocol=true",
         "-Dlog.level=ALL",
         "-Xmx4g",
+        "-Xms512m",
         "-XX:AdaptiveSizePolicyWeight=90",
         "-XX:GCTimeRatio=4",
         "-XX:+UseParallelGC",
@@ -224,14 +224,30 @@ local config = {
             gradle = {
                 enabled = true,
             },
+            -- Aggregate Gradle workspaces are large enough that background
+            -- autobuilds can compete with navigation and indexing requests.
+            autobuild = {
+                enabled = aggregate_root == nil,
+            },
+            maxConcurrentBuilds = 1,
+            import = {
+                exclusions = import_exclusions,
+                gradle = {
+                    -- The aggregate build has unresolved root annotation-processor
+                    -- dependencies. Skip JDTLS's APT model so project import can finish.
+                    annotationProcessing = {
+                        enabled = false,
+                    },
+                },
+            },
             maven = {
                 downloadSources = true,
             },
             implementationsCodeLens = {
-                enabled = true,
+                enabled = false,
             },
             referencesCodeLens = {
-                enabled = true,
+                enabled = false,
             },
             references = {
                 includeDecompiledSources = true,
