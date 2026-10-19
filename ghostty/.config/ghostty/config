@@ -6,7 +6,9 @@ background-image-opacity = 0.3
 background-image-fit = cover
 
 font-family = MesloLGS NF
+font-family = PingFang TC
 font-family = Courier New
+font-family = Times New Roman
 font-size = 14
 
 # windows related
