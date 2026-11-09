@@ -1,21 +1,53 @@
 {
-  "lastChangelogVersion": "0.85.1",
-  "packages": [
-    "npm:pi-web-access",
-    "npm:pi-powerline-footer",
-    "npm:@ifi/oh-pi-themes",
-    "npm:@ifi/pi-plan",
-    "npm:pi-brain",
-    "npm:pi-context",
-    "npm:pi-telebridge",
-    "https://github.com/davebcn87/pi-autoresearch"
-  ],
-  "skills": [
-    "~/.claude/skills"
-  ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
-  "theme": "gruvbox-dark",
-  "defaultThinkingLevel": "medium",
-  "quietStartup": false
+    "lastChangelogVersion": "1.5.0",
+    "packages": [
+        "https://github.com/davebcn87/pi-autoresearch",
+        "npm:@ff-labs/pi-fff",
+        "npm:@ifi/oh-pi-themes",
+        "npm:@ifi/pi-plan",
+        "npm:@indexyz/pi-continue",
+        "npm:@injaneity/pi-computer-use",
+        "npm:@juicesharp/rpiv-ask-user-question",
+        "npm:@juicesharp/rpiv-todo",
+        "npm:@sherif-fanous/pi-rtk",
+        "npm:context-mode",
+        "npm:pi-brain",
+        "npm:pi-btw",
+        "npm:pi-context",
+        "npm:pi-diff-review",
+        "npm:pi-goal-x",
+        "npm:pi-lens",
+        "npm:pi-mcp-adapter",
+        "npm:pi-memory",
+        "npm:pi-powerline-footer",
+        "npm:pi-rtk-rewrite",
+        "npm:pi-subagents",
+        "npm:pi-telebridge",
+        "npm:pi-web-access"
+    ],
+    "skills": [
+        "~/.claude/skills"
+    ],
+    "defaultProvider": "openai-codex",
+    "defaultModel": "gpt-6.1-sol",
+    "theme": "gruvbox-dark",
+    "defaultThinkingLevel": "medium",
+    "quietStartup": false,
+    "defaultTools": [
+        "+codemode"
+    ],
+    "extensions": [
+        "-builtin:mcp"
+    ],
+    "extensionChangelogVersions": {
+        "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+        "{\"source\":\"npm:pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
+        "{\"source\":\"https://github.com/davebcn87/pi-autoresearch\",\"scope\":\"user\"}": "1.9.0",
+        "{\"source\":\"npm:@sherif-fanous/pi-rtk\",\"scope\":\"user\"}": "0.7.0",
+        "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.87.0",
+        "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1",
+        "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.10",
+        "{\"source\":\"npm:pi-memory\",\"scope\":\"user\"}": "0.4.2",
+        "{\"source\":\"npm:@indexyz/pi-continue\",\"scope\":\"user\"}": "0.1.44"
+    }
 }

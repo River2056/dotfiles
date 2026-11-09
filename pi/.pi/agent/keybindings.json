@@ -1,4 +1,11 @@
 {
+  "tui.altScreen.pageUp": ["pageUp", "ctrl+shift+u"],
+  "tui.altScreen.pageDown": ["pageDown", "ctrl+shift+d"],
+  "tui.altScreen.lineUp": "ctrl+shift+y",
+  "tui.altScreen.lineDown": "ctrl+shift+e",
+  "tui.altScreen.bottom": ["ctrl+end", "ctrl+shift+g"],
+  "tui.altScreen.top": ["ctrl+home", "ctrl+shift+h"],
+  "tui.altScreen.searchPrevious": "shift+enter",
   "tui.editor.cursorUp": ["up", "alt+k"],
   "tui.editor.cursorDown": ["down", "alt+j"],
   "tui.editor.cursorLeft": ["left", "alt+h"],
