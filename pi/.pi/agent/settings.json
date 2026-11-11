@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.5.2",
   "packages": [
     "https://github.com/davebcn87/pi-autoresearch",
     "npm:@ff-labs/pi-fff",
@@ -12,7 +12,6 @@
     "npm:@sherif-fanous/pi-rtk",
     "npm:context-mode",
     "npm:pi-brain",
-    "npm:pi-btw",
     "npm:pi-context",
     "npm:pi-diff-review",
     "npm:pi-goal-x",
@@ -20,10 +19,10 @@
     "npm:pi-mcp-adapter",
     "npm:pi-memory",
     "npm:pi-powerline-footer",
-    "npm:pi-rtk-rewrite",
     "npm:pi-subagents",
     "npm:pi-telebridge",
-    "npm:pi-web-access"
+    "npm:pi-web-access",
+    "npm:pi-btw"
   ],
   "skills": [
     "~/.claude/skills"
@@ -41,10 +40,10 @@
     "{\"source\":\"npm:pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
     "{\"source\":\"https://github.com/davebcn87/pi-autoresearch\",\"scope\":\"user\"}": "1.9.0",
     "{\"source\":\"npm:@sherif-fanous/pi-rtk\",\"scope\":\"user\"}": "0.7.0",
-    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.87.0",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.88.0",
     "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1",
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.10",
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12",
     "{\"source\":\"npm:pi-memory\",\"scope\":\"user\"}": "0.4.2",
-    "{\"source\":\"npm:@indexyz/pi-continue\",\"scope\":\"user\"}": "0.1.44"
+    "{\"source\":\"npm:@indexyz/pi-continue\",\"scope\":\"user\"}": "0.2.0",
   }
 }
