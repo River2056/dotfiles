@@ -42,5 +42,7 @@
     "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12",
     "{\"source\":\"npm:pi-memory\",\"scope\":\"user\"}": "0.4.2",
     "{\"source\":\"npm:@indexyz/pi-continue\",\"scope\":\"user\"}": "0.2.0",
+    "{\"source\":\"/Users/kevintung/.pi/agent/local-packages/pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
+    "{\"source\":\"./local-packages/pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0"
   }
 }
