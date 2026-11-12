@@ -1,0 +1,23 @@
+diff --git a/segments.ts b/segments.ts
+--- a/segments.ts
++++ b/segments.ts
+@@ -353,11 +353,18 @@ const contextPctSegment: StatusLineSegment = {
+     const approximate = ctx.contextApproximate ? "~" : "";
+     // "full" (default): tokens/window + one-decimal percentage + auto-compact icon.
+     // "percent": bare rounded percentage, threshold-colored, no icons.
+-    const text = percentOnly
++    const filledBlocks = hasKnownUsage
++      ? Math.round(Math.max(0, Math.min(100, contextPercent)) / 10)
++      : 0;
++    const progressBar = hasKnownUsage
++      ? `${"▰".repeat(filledBlocks)}${"▱".repeat(10 - filledBlocks)}`
++      : "▱".repeat(10);
++    const usageText = percentOnly
+       ? (hasKnownUsage ? `${approximate}${Math.round(contextPercent)}%` : "?")
+       : hasKnownUsage
+         ? `${approximate}${formatTokens(contextTokens)}/${formatTokens(contextWindow)} (${contextPercent.toFixed(1)}%)${autoIcon}`
+         : `?/${formatTokens(contextWindow)}${autoIcon}`;
++    const text = `${progressBar} ${usageText}`;
+ 
+     // Icon outside color, text inside - use semantic colors for thresholds
+     let content: string;
