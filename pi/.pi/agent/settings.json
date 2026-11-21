@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.5.2",
+  "lastChangelogVersion": "1.6.0",
   "packages": [
     "https://github.com/davebcn87/pi-autoresearch",
     "npm:@ff-labs/pi-fff",
@@ -22,7 +22,9 @@
     "npm:pi-subagents",
     "npm:pi-telebridge",
     "npm:pi-web-access",
-    "npm:pi-btw"
+    "npm:pi-btw",
+    "npm:@mem0/pi-agent-plugin",
+    "npm:@sting8k/pi-vcc"
   ],
   "skills": ["~/.claude/skills"],
   "defaultProvider": "openai-codex",
@@ -33,13 +35,13 @@
   "defaultTools": ["+codemode"],
   "extensions": ["-builtin:mcp"],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.48.0",
     "{\"source\":\"npm:pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
     "{\"source\":\"https://github.com/davebcn87/pi-autoresearch\",\"scope\":\"user\"}": "1.9.0",
     "{\"source\":\"npm:@sherif-fanous/pi-rtk\",\"scope\":\"user\"}": "0.7.0",
-    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.88.0",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.89.2",
     "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1",
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12",
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.5.1",
     "{\"source\":\"npm:pi-memory\",\"scope\":\"user\"}": "0.4.2",
     "{\"source\":\"npm:@indexyz/pi-continue\",\"scope\":\"user\"}": "0.2.0",
     "{\"source\":\"/Users/kevintung/.pi/agent/local-packages/pi-powerline-footer\",\"scope\":\"user\"}": "0.22.0",
